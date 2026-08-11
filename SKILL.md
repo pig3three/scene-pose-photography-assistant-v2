@@ -1,6 +1,6 @@
 ---
 name: scene-pose-photography-assistant-v2
-description: Combine two user-supplied photos—one authorized model reference and one scenery/location reference—to design a coherent set of 8 or 16 natural, shootable portrait poses. Use when the user wants identity-, body-, hair-, clothing-, footwear-, and accessory-aware scene placement, pose direction, camera guidance, photographer callouts, pose-board images, or a numbered scene map for a real person in a real location.
+description: Combine an authorized model photo, a scenery/location photo, and optional camera-body and lens specifications to design 8 or 16 natural, shootable portrait poses. Use when the user wants identity- and wardrobe-aware scene placement, equipment-aware pose direction, working distance, framing, aperture, shutter, autofocus guidance, photographer callouts, pose-board images, or a numbered scene map for a real person in a real location.
 ---
 
 # Scene Pose Photography Assistant V2
@@ -13,10 +13,11 @@ Use an authorized model photo and a separate location photo to build a scene-awa
 2. Inspect both images before planning. Read [references/model-reference-lock.md](references/model-reference-lock.md) and publish a concise lock table.
 3. Read [references/scene-analysis.md](references/scene-analysis.md) and diagnose usable zones, light, depth, anchors, hazards, and camera access.
 4. Read [references/subject-profiles.md](references/subject-profiles.md). Treat ambiguous youthful subjects as minors unless adulthood is explicit.
-5. Read [references/pose-planning.md](references/pose-planning.md) and [references/pose-counts.md](references/pose-counts.md). Generate exactly 8 or 16 poses; default to 8.
-6. Read [references/photographer-directions.md](references/photographer-directions.md). Give one short, speakable Mandarin callout per pose when the user writes Chinese.
-7. If images are requested, read [references/visual-outputs.md](references/visual-outputs.md), lock all pose IDs in text, then generate each board as a separate image using both references.
-8. Audit identity, wardrobe, scene fidelity, physical feasibility, safety, pose diversity, and ID consistency.
+5. If camera or lens data is supplied, read [references/camera-lens-adaptation.md](references/camera-lens-adaptation.md), normalize the exact equipment, and publish an equipment lock. Require at least lens focal length and maximum aperture.
+6. Read [references/pose-planning.md](references/pose-planning.md) and [references/pose-counts.md](references/pose-counts.md). Generate exactly 8 or 16 poses; default to 8. Adapt placement, crop, motion, and camera distance to the locked equipment.
+7. Read [references/photographer-directions.md](references/photographer-directions.md). Give one short, speakable Mandarin callout per pose when the user writes Chinese.
+8. If images are requested, read [references/visual-outputs.md](references/visual-outputs.md), lock all pose IDs in text, then generate each board as a separate image using both references.
+9. Audit identity, wardrobe, scene fidelity, equipment feasibility, physical feasibility, safety, pose diversity, and ID consistency.
 
 ## Input contract
 
@@ -27,16 +28,18 @@ Required:
 
 Optional:
 
-- portrait goal, mood, mobility limits, pose count (`8` or `16`), aspect ratio, available lenses, and requested visual outputs
+- portrait goal, mood, mobility limits, pose count (`8` or `16`), aspect ratio, camera model, lens model, lens focal length, lens maximum aperture, and requested visual outputs
 
 If one photo is missing, ask for it. If both are present but their roles are unclear, ask one concise role question. Do not proceed from a model photo that is too cropped or obscured to support requested full-body or footwear-aware guidance; state what is invisible and request a clearer reference or mark those attributes unlocked.
+
+Camera and lens are optional as a pair. If the user requests equipment-aware guidance but provides an ambiguous body name, ask for the exact model. If a lens model is absent, require at least focal length and maximum aperture, such as `50mm F1.8`. Never silently substitute a different camera or lens.
 
 ## Defaults
 
 - poses: 8
 - mood: natural, relaxed, lived-in
 - output crop: vertical 3:4
-- lenses: 35 mm environment, 50 mm full/three-quarter, 85 mm half/close
+- equipment when omitted: give focal-length categories rather than pretending a particular camera/lens is available
 - visuals for 8 poses: two 2×2 pose boards plus one scene map
 - visuals for 16 poses: four 2×2 pose boards plus one scene map
 
@@ -54,11 +57,16 @@ For every pose output exactly:
 环境互动：
 机位：
 景别与焦段：
+建议拍摄距离：
+建议光圈：
+快门与对焦：
 拍摄时机：
 摄影师现场口令：“……”
 ```
 
 Describe left and right from the subject's perspective when needed. Keep actions compatible with visible clothing, footwear, proportions, and mobility. Do not reshape the body, redesign garments, change shoes, add props, or beautify the person into a different identity.
+
+When equipment is locked, do not recommend a focal length the photographer does not have. Distinguish optical capability from artistic choice: maximum aperture is a limit, not a mandatory setting. Prefer stopping down when full-body depth, multiple facial planes, movement, or scene readability requires it.
 
 ## Image-generation rules
 
@@ -81,8 +89,9 @@ Describe left and right from the subject's perspective when needed. Keep actions
 
 1. `图片角色与模特锁定`
 2. `场景判断`
-3. `拍摄路线`
-4. `8 个美姿` or `16 个美姿`
-5. `现场执行建议`
-6. generated pose boards
-7. generated scene map
+3. `器材锁定与拍摄约束`
+4. `拍摄路线`
+5. `8 个美姿` or `16 个美姿`
+6. `现场执行建议`
+7. generated pose boards
+8. generated scene map
