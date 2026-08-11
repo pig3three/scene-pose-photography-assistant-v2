@@ -1,0 +1,4 @@
+interface:
+  display_name: "场景美姿摄影助手 V2"
+  short_description: "结合真实模特照片与场景照片生成美姿、动作板和站位图"
+  default_prompt: "Use $scene-pose-photography-assistant-v2 with my authorized model photo and scene photo to design eight or sixteen poses and generate pose boards plus a scene map."
