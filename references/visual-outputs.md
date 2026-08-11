@@ -10,6 +10,7 @@ Generate only after text pose IDs are final.
 - Include both the model and scene references in every call.
 - Repeat: same real model identity, proportions, hair, outfit, shoes, accessories, scene geometry, light direction, and fixed pose IDs.
 - Favor full-body readability when pose mechanics matter. Use tighter crops only when the locked plan calls for them.
+- Preserve each locked hand gesture, finger shape, leg position, knee bend, foot direction, and weight-bearing side. Do not normalize expressive poses back to relaxed arms and parallel feet.
 - Allow only exact pose IDs and 2–4 word labels inside images.
 
 ## Scene map
